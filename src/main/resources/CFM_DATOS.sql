@@ -15,3 +15,10 @@ CREATE TABLE CFM_DATOS (
 );
     
 CREATE SEQUENCE CFM_DATOS_SEQ MINVALUE 1 MAXVALUE 999999999 START WITH 1 INCREMENT BY 1 CACHE 20;
+
+--Obtener el valor actual de la secuencia
+--select CFM_DATOS_SEQ.currval from dual;
+
+--Sumar 1 a la secuencia
+--select CFM_DATOS_SEQ.nextval from dual;
+
