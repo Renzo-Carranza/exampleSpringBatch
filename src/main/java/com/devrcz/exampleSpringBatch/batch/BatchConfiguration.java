@@ -23,8 +23,8 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,8 +33,7 @@ import org.springframework.context.annotation.Configuration;
  * @author renzo
  */
 @Configuration
-@EnableBatchProcessing
-@EnableConfigurationProperties
+@EnableBatchProcessing(modular = true)
 public class BatchConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(BatchConfiguration.class);
@@ -57,65 +56,14 @@ public class BatchConfiguration {
     @Value("${idDatoInicio}")
     public String idDatoInicio;
 
-    @Autowired
-    public DataSource dataSourceAcuerdo;
+    @Autowired(required = true)
+    @Qualifier("oracleAcuerdo")
+    public DataSource oracleAcuerdo;
 
-//    @Bean
-//    @Primary
-//    @ConfigurationProperties("spring.batch.datasource")
-//    public DataSourceProperties sourceDataSource() {
-//        return new DataSourceProperties();
-//    }
-//
-//    @Bean(name = "ACUERDO_DB")
-//    @Primary
-//    @ConfigurationProperties("spring.batch.datasource")
-//    public DataSource AcuerdoDataSource() {
-//        return sourceDataSource().initializeDataSourceBuilder().build();
-//    }
-//
-//    @Bean
-//    @ConfigurationProperties("spring.datasource")
-//    public DataSourceProperties destinationDataSource() {
-//        return new DataSourceProperties();
-//    }
-//
-//    @Bean(name = "COMISION_DB")
-//    @ConfigurationProperties("spring.datasource")
-//    public DataSource ComisionDataSource() {
-//        return destinationDataSource().initializeDataSourceBuilder().build();
-//    }
-//
-//    @Bean
-//    public JdbcTemplate oracleJdbcTemplate(@Qualifier("COMISION_DB") DataSource oracleDb) {
-//        return new JdbcTemplate(oracleDb);
-//    }
-//    @Qualifier("ACUERDO_DB")
-//    HikariDataSource dataSourceAcuerdo = new DatabaseConfig().destinationDataSource();
-//    @Qualifier("COMISION_DB")
-//    DataSource dataSourceComision = new DatabaseConfig().sourceDataSource();
-//
-//    @Bean
-//    BatchConfigurer configurerACUERDO(@Qualifier("ACUERDO") DataSource dataSource) {
-//        return new DefaultBatchConfigurer(dataSource);
-//    }
-//
-//    @Bean
-//    BatchConfigurer configurerCOMISION(@Qualifier("COMISION") DataSource dataSource) {
-//        return new DefaultBatchConfigurer(dataSource);
-//    }
-//    @ConfigurationProperties(prefix = "spring.datasource")
-//    @Bean(name = "COMISION")
-//    public DataSource sourceDataSource() {
-//        return DataSourceBuilder.create().build();
-//    }
-//
-//    @Bean(name = "ACUERDO")
-//    @Primary
-//    @ConfigurationProperties(prefix = "spring.batch.datasource")
-//    public DataSource destinationDataSource() {
-//        return DataSourceBuilder.create().build();
-//    }
+    @Autowired(required = true)
+    @Qualifier("oracleComision")
+    public DataSource oracleComision;
+
     @Bean
     public Job readCSVFileJob1() {
         return jobBuilderFactory
@@ -139,7 +87,7 @@ public class BatchConfiguration {
     @Bean
     public JdbcCursorItemReader<AcuerdoFinanciamientoBean> reader() {
         JdbcCursorItemReader<AcuerdoFinanciamientoBean> reader = new JdbcCursorItemReader<AcuerdoFinanciamientoBean>();
-        reader.setDataSource(dataSourceAcuerdo);
+        reader.setDataSource(oracleAcuerdo);
         reader.setSql("SELECT acuerdo.ACFI_ID \"id_acuerdo\", \n"
                 + "acuerdo.ACFI_CTIPO \"tipo\", \n"
                 + "acuerdo.ACFI_CSTIP \"subtipo\" \n"
@@ -168,7 +116,7 @@ public class BatchConfiguration {
 
         //Para el update debe venir el id en el read
         //writer.setSql("UPDATE CFM_DATOS SET CFM_TIPO = :dato_tipo, CFM_SUB_TIPO = :dato_sub_tipo WHERE CFM_ID = :id");
-        writer.setDataSource(dataSourceAcuerdo);
+        writer.setDataSource(oracleComision);
         return writer;
     }
 

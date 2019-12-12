@@ -5,7 +5,6 @@
  */
 package com.devrcz.exampleSpringBatch.config;
 
-import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -20,16 +19,17 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class DatabaseConfig {
 
-    @Bean(name = "ACUERDO_DB")
-    //@Primary
     @ConfigurationProperties(prefix = "acuerdo.datasource")
-    public HikariDataSource destinationDataSource() {
-        return DataSourceBuilder.create().type(HikariDataSource.class).build();
+    @Bean(name = "oracleAcuerdo")
+    @Primary
+    public DataSource oracleAcuerdoDataSource() {
+        return DataSourceBuilder.create().build();
     }
 
-//    @ConfigurationProperties(prefix = "comision.datasource")
-//    @Bean(name = "COMISION_DB")
-//    public HikariDataSource sourceDataSource() {
-//        return DataSourceBuilder.create().type(HikariDataSource.class).build();
-//    }
+    @ConfigurationProperties(prefix = "comision.datasource")
+    @Bean(name = "oracleComision")
+    public DataSource oracleComisionDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
 }
