@@ -25,6 +25,7 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableBatchProcessing(modular = true)
+@EnableAutoConfiguration
 public class BatchConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(BatchConfiguration.class);
@@ -65,9 +67,9 @@ public class BatchConfiguration {
     public DataSource oracleComision;
 
     @Bean
-    public Job readCSVFileJob1() {
+    public Job migrateDataToDataBase() {
         return jobBuilderFactory
-                .get("readCSVFileJob1")
+                .get("migrateDataToDataBase")
                 .incrementer(new RunIdIncrementer())
                 .start(step())
                 .build();
@@ -83,7 +85,7 @@ public class BatchConfiguration {
                 .writer(writer())
                 .build();
     }
-
+    
     @Bean
     public JdbcCursorItemReader<AcuerdoFinanciamientoBean> reader() {
         JdbcCursorItemReader<AcuerdoFinanciamientoBean> reader = new JdbcCursorItemReader<AcuerdoFinanciamientoBean>();
